@@ -9,14 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserDtoToUser implements Converter<UserDto, User> {
 
-    @Override
-    public @NonNull User convert(UserDto source) {
-        User user = new User();
-        user.setId(source.getId());
-        user.setFirstName(source.getFirstName());
-        user.setLastName(source.getLastName());
-        user.setEmail(source.getEmail());
-        user.setPassword(source.getPassword());
-        return user;
-    }
+  @Override
+  public User convert(@NonNull UserDto source) {
+    User user = new User();
+    user.setId(source.getId());
+    user.setUserName(source.getUserName());
+    user.setPassword(source.getPassword());
+    return user;
+  }
 }
