@@ -1,6 +1,7 @@
 package net.recipe.app.common;
 
 import net.recipe.app.common.exception.ResourceNotFoundException;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,5 +26,10 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleDataIntegrityViolationException(
       DataIntegrityViolationException ex) {
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
   }
 }
