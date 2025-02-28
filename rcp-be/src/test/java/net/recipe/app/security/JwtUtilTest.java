@@ -1,17 +1,16 @@
 package net.recipe.app.security;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JwtUtilTest {
 
@@ -20,32 +19,17 @@ public class JwtUtilTest {
   @BeforeEach
   public void setUp() {
     MockitoAnnotations.openMocks(this);
-    ReflectionTestUtils.setField(jwtUtil, "secret", "secret"); // Set the secret key
-  }
-
-  @Test
-  public void testExtractUsername() {
-    String secret = "secret";
-    String token =
-        Jwts.builder()
-            .setSubject("testuser")
-            .setIssuedAt(new Date(System.currentTimeMillis()))
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-            .signWith(SignatureAlgorithm.HS256, secret)
-            .compact();
-    String username = jwtUtil.extractUsername(token);
-    assertEquals("testuser", username);
   }
 
   @Test
   public void testGenerateToken() {
-    String token = jwtUtil.generateToken("testuser");
-    assertTrue(token != null && !token.isEmpty());
-  }
+    UserDetails userDetails =
+        new User("testuser", "testpassword", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    String token = jwtUtil.generateToken(userDetails);
 
-  @Test
-  public void testValidateToken() {
-    String token = jwtUtil.generateToken("testuser");
-    assertTrue(jwtUtil.validateToken(token, "testuser"));
+    UserDetails parsedUserDetails = jwtUtil.parseToken(token);
+
+    assertEquals(userDetails.getUsername(), parsedUserDetails.getUsername());
+    assertEquals(userDetails.getAuthorities().size(), parsedUserDetails.getAuthorities().size());
   }
 }

@@ -1,9 +1,11 @@
 package net.recipe.app.service;
 
-import net.recipe.app.dto.UserDto;
+import net.recipe.app.entity.User;
 
 public interface UserService {
-    UserDto save(UserDto userDto);
-    void delete(Long userId);
-    UserDto findById(Long userId);
+  User save(User user);
+
+  void delete(Long userId);
+
+  User findById(Long userId);
 }

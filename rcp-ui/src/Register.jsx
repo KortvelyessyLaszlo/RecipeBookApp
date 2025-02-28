@@ -7,7 +7,7 @@ import { MDBContainer, MDBInput, MDBBtn } from 'mdb-react-ui-kit';
 import { Alert } from 'react-bootstrap';
 
 const Register = () => {
-  const [userName, setUserName] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +15,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (userName.length < 4 || password.length < 4) {
+    if (username.length < 4 || password.length < 4) {
       setError('Username and password must be at least 4 characters long.');
       return;
     }
@@ -24,7 +24,7 @@ const Register = () => {
       return;
     }
     try {
-      await axios.post('http://localhost:8080/api/auth/register', { userName, password });
+      await axios.post('http://localhost:8080/api/auth/register', { username, password });
       navigate('/login');
     } catch (error) {
       if (error.message === 'Network Error') {
@@ -39,7 +39,7 @@ const Register = () => {
     <div className="d-flex justify-content-center align-items-center vh-100">
       <MDBContainer className="p-3 my-5 d-flex flex-column w-25">
         {error && <Alert variant='danger' className='mb-4'>{error}</Alert>}
-        <MDBInput wrapperClass='mb-4' label='Username' id='form1' type='text' onChange={(e) => setUserName(e.target.value)} />
+        <MDBInput wrapperClass='mb-4' label='Username' id='form1' type='text' onChange={(e) => setUsername(e.target.value)} />
         <MDBInput wrapperClass='mb-4' label='Password' id='form2' type='password' onChange={(e) => setPassword(e.target.value)} />
         <MDBInput wrapperClass='mb-4' label='Confirm Password' id='form3' type='password' onChange={(e) => setConfirmPassword(e.target.value)} />
         <MDBBtn className="mb-4" onClick={handleSubmit}>Register</MDBBtn>
