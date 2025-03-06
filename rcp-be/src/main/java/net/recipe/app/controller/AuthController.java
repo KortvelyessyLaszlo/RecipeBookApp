@@ -2,7 +2,7 @@ package net.recipe.app.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.recipe.app.dto.UserDto;
-import net.recipe.app.mapper.GlobalMapper;
+import net.recipe.app.mapper.UserMapper;
 import net.recipe.app.security.JwtUtil;
 import net.recipe.app.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -26,7 +28,7 @@ public class AuthController {
 
   private final PasswordEncoder passwordEncoder;
 
-  private final GlobalMapper globalMapper;
+  private final UserMapper userMapper;
 
   @PostMapping("/login")
   public String createAuthenticationToken(@RequestBody UserDto userDto) {
@@ -40,7 +42,8 @@ public class AuthController {
   @PostMapping("/register")
   public String registerUser(@RequestBody UserDto userDto) {
     userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-    userService.save(globalMapper.dtoToUser(userDto));
+    userDto.setRoles(Set.of("USER"));
+    userService.save(userMapper.dtoToUser(userDto));
 
     return "User registered successfully";
   }

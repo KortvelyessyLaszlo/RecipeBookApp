@@ -3,12 +3,11 @@ package net.recipe.app.service;
 import lombok.RequiredArgsConstructor;
 import net.recipe.app.entity.User;
 import net.recipe.app.repository.UserRepository;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
       throw new UsernameNotFoundException("User not found");
     }
     return new org.springframework.security.core.userdetails.User(
-        user.getUsername(), user.getPassword(), new ArrayList<>());
+        user.getUsername(),
+        user.getPassword(),
+        user.getRoles().stream().map(SimpleGrantedAuthority::new).toList());
   }
 }

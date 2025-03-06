@@ -1,5 +1,6 @@
 package net.recipe.app.config;
 
+import lombok.RequiredArgsConstructor;
 import net.recipe.app.security.JwtRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +17,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
   private final JwtRequestFilter jwtRequestFilter;
-
-  public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
-    this.jwtRequestFilter = jwtRequestFilter;
-  }
 
   @Bean
   public AuthenticationManager authenticationManager(

@@ -2,7 +2,7 @@ package net.recipe.app.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.recipe.app.dto.UserDto;
-import net.recipe.app.mapper.GlobalMapper;
+import net.recipe.app.mapper.UserMapper;
 import net.recipe.app.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +15,11 @@ public class UserController {
 
   private final UserService userService;
 
-  private final GlobalMapper globalMapper;
+  private final UserMapper userMapper;
 
   @PostMapping
   public ResponseEntity<UserDto> save(@RequestBody UserDto userDto) {
-    return ResponseEntity.ok(
-        globalMapper.userToDto(userService.save(globalMapper.dtoToUser(userDto))));
+    return ResponseEntity.ok(userMapper.userToDto(userService.save(userMapper.dtoToUser(userDto))));
   }
 
   @DeleteMapping("/{userId}")
@@ -31,6 +30,6 @@ public class UserController {
 
   @GetMapping("/{userId}")
   public ResponseEntity<UserDto> findById(@PathVariable Long userId) {
-    return ResponseEntity.ok(globalMapper.userToDto(userService.findById(userId)));
+    return ResponseEntity.ok(userMapper.userToDto(userService.findById(userId)));
   }
 }

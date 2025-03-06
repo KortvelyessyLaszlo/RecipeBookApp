@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.Set;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -29,6 +31,7 @@ public class CustomUserDetailsServiceTest {
     User user = new User();
     user.setUsername("testuser");
     user.setPassword("testpassword");
+    user.setRoles(Set.of("USER"));
     when(userRepository.findByUsername(anyString())).thenReturn(user);
 
     customUserDetailsService.loadUserByUsername("testuser");

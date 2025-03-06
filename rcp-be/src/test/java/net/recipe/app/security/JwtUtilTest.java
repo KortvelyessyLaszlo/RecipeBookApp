@@ -32,4 +32,19 @@ public class JwtUtilTest {
     assertEquals(userDetails.getUsername(), parsedUserDetails.getUsername());
     assertEquals(userDetails.getAuthorities().size(), parsedUserDetails.getAuthorities().size());
   }
+
+  @Test
+  public void testParseToken() {
+    UserDetails userDetails =
+        new User("testuser", "testpassword", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+    String token = jwtUtil.generateToken(userDetails);
+
+    UserDetails parsedUserDetails = jwtUtil.parseToken(token);
+
+    assertEquals(userDetails.getUsername(), parsedUserDetails.getUsername());
+    assertEquals(userDetails.getAuthorities().size(), parsedUserDetails.getAuthorities().size());
+    assertEquals(
+        userDetails.getAuthorities().iterator().next().getAuthority(),
+        parsedUserDetails.getAuthorities().iterator().next().getAuthority());
+  }
 }

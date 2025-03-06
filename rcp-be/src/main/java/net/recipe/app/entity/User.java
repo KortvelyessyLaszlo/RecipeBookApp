@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.Set;
+
 @Entity
-@Table(name = "users")
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class User {
@@ -16,4 +17,7 @@ public class User {
 
   private String username;
   private String password;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  private Set<String> roles;
 }

@@ -2,7 +2,7 @@ package net.recipe.app.controller;
 
 import net.recipe.app.dto.UserDto;
 import net.recipe.app.entity.User;
-import net.recipe.app.mapper.GlobalMapper;
+import net.recipe.app.mapper.UserMapper;
 import net.recipe.app.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ public class UserControllerTest {
 
   @Mock private UserService userService;
 
-  @Mock private GlobalMapper globalMapper;
+  @Mock private UserMapper userMapper;
 
   @InjectMocks private UserController userController;
 
@@ -39,9 +39,9 @@ public class UserControllerTest {
   public void testSaveUser() throws Exception {
     UserDto userDto = new UserDto();
     User user = new User();
-    when(globalMapper.dtoToUser(any(UserDto.class))).thenReturn(user);
+    when(userMapper.dtoToUser(any(UserDto.class))).thenReturn(user);
     when(userService.save(any(User.class))).thenReturn(user);
-    when(globalMapper.userToDto(any(User.class))).thenReturn(userDto);
+    when(userMapper.userToDto(any(User.class))).thenReturn(userDto);
 
     mockMvc
         .perform(
@@ -53,19 +53,15 @@ public class UserControllerTest {
 
   @Test
   public void testDeleteUser() throws Exception {
-    mockMvc
-        .perform(delete("/api/user/1"))
-        .andExpect(status().isNoContent());
+    mockMvc.perform(delete("/api/user/1")).andExpect(status().isNoContent());
   }
 
   @Test
   public void testFindUserById() throws Exception {
     UserDto userDto = new UserDto();
     when(userService.findById(anyLong())).thenReturn(new User());
-    when(globalMapper.userToDto(any(User.class))).thenReturn(userDto);
+    when(userMapper.userToDto(any(User.class))).thenReturn(userDto);
 
-    mockMvc
-        .perform(get("/api/user/1"))
-        .andExpect(status().isOk());
+    mockMvc.perform(get("/api/user/1")).andExpect(status().isOk());
   }
 }
