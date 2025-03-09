@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'mdb-react-ui-kit/dist/css/mdb.min.css';
 import { MDBContainer, MDBInput, MDBBtn } from 'mdb-react-ui-kit';
 import { Alert } from 'react-bootstrap';
-import AuthService from './service/jwtservice';
+import AuthService from './service/authservice';
 
 const Login = () => {
   const [username, setUsername] = useState('');

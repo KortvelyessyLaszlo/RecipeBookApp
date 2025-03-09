@@ -4,27 +4,31 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class User {
+public class Recipe {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
   private Long id;
 
-  private String username;
-  private String password;
+  private String title;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  private Set<String> roles;
+  private Set<Ingredient> ingredients;
 
-  @OneToMany(
-      mappedBy = "author",
-      cascade = CascadeType.ALL,
-      orphanRemoval = true,
-      fetch = FetchType.EAGER)
-  private Set<Recipe> recipes;
+  private String instructions;
+
+  @ManyToOne private User author;
+
+  @Temporal(TemporalType.DATE)
+  private LocalDate createdAt;
+
+  @Lob private byte[] image;
+
+  private int cookingTime;
 }

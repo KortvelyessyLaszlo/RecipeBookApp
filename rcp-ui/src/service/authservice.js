@@ -10,6 +10,10 @@ const login = async (username, password) => {
   return response.data;
 };
 
+const logout = () => {
+  localStorage.removeItem('token');
+};
+
 const saveToken = (token) => {
   localStorage.setItem('token', token);
 };
@@ -18,10 +22,24 @@ const getToken = () => {
   return localStorage.getItem('token');
 };
 
+const checkAuth = async () => {
+  const token = getToken();
+  if (!token) return false;
+
+  try {
+    const response = await axios.get(API_URL + 'check', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.status === 200;
+  } catch {
+    return false;
+  }
+};
+
 const AuthService = {
   login,
-  saveToken,
-  getToken,
+  logout,
+  checkAuth,
 };
 
 export default AuthService;

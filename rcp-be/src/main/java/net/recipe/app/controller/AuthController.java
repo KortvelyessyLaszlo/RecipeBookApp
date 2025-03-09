@@ -5,6 +5,7 @@ import net.recipe.app.dto.UserDto;
 import net.recipe.app.mapper.UserMapper;
 import net.recipe.app.security.JwtUtil;
 import net.recipe.app.service.UserService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,5 +47,10 @@ public class AuthController {
     userService.save(userMapper.dtoToUser(userDto));
 
     return "User registered successfully";
+  }
+
+  @GetMapping("/check")
+  public ResponseEntity<?> checkTokenValidity() {
+    return ResponseEntity.ok().build();
   }
 }
