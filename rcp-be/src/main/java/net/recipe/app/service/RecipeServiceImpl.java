@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +25,7 @@ public class RecipeServiceImpl implements RecipeService {
 
   private final UserRepository userRepository;
 
+  @Override
   public List<Recipe> find(RecipeFilterDto recipeFilter) {
 
     List<Recipe> allRecipes = recipeRepository.findAll();
@@ -56,6 +58,7 @@ public class RecipeServiceImpl implements RecipeService {
         .toList();
   }
 
+  @Override
   public Recipe add(Recipe recipe) {
     String username =
         ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
@@ -72,6 +75,7 @@ public class RecipeServiceImpl implements RecipeService {
     return recipeRepository.save(recipe);
   }
 
+  @Override
   public Recipe update(Long id, Recipe newRecipe) {
     String username =
         ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
@@ -96,5 +100,32 @@ public class RecipeServiceImpl implements RecipeService {
     recipe.setImage(newRecipe.getImage());
 
     return recipeRepository.save(recipe);
+  }
+
+  @Override
+  public List<Recipe> findByUser() {
+    String username =
+        ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+            .getUsername();
+
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UsernameNotFoundException("User not found");
+    }
+
+    return recipeRepository.findByAuthor(user);
+  }
+
+  @Override
+  public RecipeFilterDto getFilters() {
+    RecipeFilterDto recipeFilter = new RecipeFilterDto();
+    recipeFilter.setIngredientNames(new TreeSet<>(recipeRepository.findIngredientNames()));
+    recipeFilter.setCreatedFrom(recipeRepository.findTopByOrderByCreatedAtAsc().getCreatedAt());
+    recipeFilter.setCreatedTo(recipeRepository.findTopByOrderByCreatedAtDesc().getCreatedAt());
+    recipeFilter.setCookingTimeFrom(
+        recipeRepository.findTopByOrderByCookingTimeAsc().getCookingTime());
+    recipeFilter.setCookingTimeTo(
+        recipeRepository.findTopByOrderByCookingTimeDesc().getCookingTime());
+    return recipeFilter;
   }
 }

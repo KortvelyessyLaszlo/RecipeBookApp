@@ -17,14 +17,14 @@ const SearchBar = ({ onSearch }) => {
     };
 
     return (
-        <MDBInputGroup className="search-bar" style={{ maxWidth: '40%', margin: 'auto' }}>
+        <MDBInputGroup className="search-bar">
             <MDBInput
                 type="text"
                 placeholder="Search recipes..."
-                style={{ backgroundColor: '#f8f9fa', padding: '0.5rem 1rem' }}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
+                style={{ backgroundColor: '#fff' }}
             />
             <MDBBtn color="primary" onClick={handleSearch}>
                 <img src={searchIcon} alt="Search" width="20" height="20" />

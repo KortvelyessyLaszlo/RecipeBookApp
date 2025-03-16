@@ -16,13 +16,20 @@ const ProfileDropdown = () => {
         checkAuthentication();
     }, []);
 
-    const handleLoginClick = () => {
+    const handleLoginClick = (event) => {
+        event.preventDefault();
         navigate('/login');
     };
 
-    const handleLogout = () => {
+    const handleLogout = (event) => {
+        event.preventDefault();
         AuthService.logout();
         setLoggedIn(false);
+    };
+
+    const handleMyRecipesClick = (event) => {
+        event.preventDefault();
+        navigate('/my-recipes');
     };
 
     return (
@@ -33,8 +40,7 @@ const ProfileDropdown = () => {
             <MDBDropdownMenu>
                 {loggedIn ? (
                     <>
-                        <MDBDropdownItem link>Profile</MDBDropdownItem>
-                        <MDBDropdownItem link>Settings</MDBDropdownItem>
+                        <MDBDropdownItem link onClick={handleMyRecipesClick}>My recipes</MDBDropdownItem>
                         <MDBDropdownItem link onClick={handleLogout}>Logout</MDBDropdownItem>
                     </>
                 ) : (

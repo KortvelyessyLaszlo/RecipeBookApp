@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import './App.css';
 import RecipeList from './RecipeList';
 import TopBar from './TopBar';
 
-function App() {
+function Home() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleSearch = (term) => {
@@ -18,4 +17,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;

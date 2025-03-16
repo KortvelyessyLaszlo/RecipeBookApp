@@ -7,9 +7,7 @@ import net.recipe.app.mapper.RecipeMapper;
 import net.recipe.app.service.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
@@ -36,5 +34,17 @@ public class RecipeController {
   @PutMapping("/{id}")
   public RecipeDto update(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
     return recipeMapper.recipeToDto(service.update(id, recipeMapper.dtoToRecipe(recipeDto)));
+  }
+
+  @GetMapping("/myrecipes")
+  public List<RecipeDto> findByUser() {
+    return service.findByUser().stream()
+        .map(recipeMapper::recipeToDto)
+        .collect(Collectors.toList());
+  }
+
+  @GetMapping("/filters")
+  public RecipeFilterDto getFilters() {
+    return service.getFilters();
   }
 }

@@ -3,30 +3,33 @@ import { Alert } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { getRecipes } from './service/recipeservice';
+import FilterSortButtons from './components/FilterSortButtons';
 
 const RecipeList = ({ searchTerm }) => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      try {
-        const data = await getRecipes();
-        setRecipes(data);
-      } catch {
-        setError('Failed to fetch recipes. Please try again later.');
-      }
-    };
     fetchRecipes();
   }, []);
+
+  const fetchRecipes = async (filter = {}) => {
+    try {
+      const data = await getRecipes(filter);
+      setRecipes(data);
+    } catch {
+      setError('Failed to fetch recipes. Please try again later.');
+    }
+  };
 
   const filteredRecipes = recipes.filter((recipe) =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <MDBContainer className='mt-4'>
+    <MDBContainer fluid className='mt-4'>
       {error && <Alert variant='danger' className='mb-4'>{error}</Alert>}
+      <FilterSortButtons onFilter={fetchRecipes} />
       <MDBRow>
         {filteredRecipes.map((recipe) => (
           <MDBCol key={recipe.id} className='mb-4 recipe-card' md='3' sm='6' xs='12'>

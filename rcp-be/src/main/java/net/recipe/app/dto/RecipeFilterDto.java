@@ -1,7 +1,6 @@
 package net.recipe.app.dto;
 
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.Set;
