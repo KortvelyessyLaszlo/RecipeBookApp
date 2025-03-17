@@ -6,10 +6,11 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Data
-public class RecipeFilterDto {
+public class RecipeFilter {
   private LocalDate createdFrom;
   private LocalDate createdTo;
   private Set<String> ingredientNames;
   private Integer cookingTimeFrom;
   private Integer cookingTimeTo;
+  private SortBy sortBy;
 }

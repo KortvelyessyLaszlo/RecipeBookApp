@@ -1,11 +1,9 @@
 import { MDBBtn } from 'mdb-react-ui-kit';
-import { Offcanvas, OffcanvasHeader, OffcanvasBody } from 'react-bootstrap';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Slider from '@mui/material/Slider';
-import { getDefaultRecipeFilters } from '../service/recipeservice';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
+import { getDefaultRecipeFilters, getSortOptions } from '../service/recipeservice';
+import FilterDrawer from './FilterDrawer';
+import SortDropdown from './SortDropdown';
 
 const FilterSortButtons = ({ onFilter }) => {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -17,6 +15,8 @@ const FilterSortButtons = ({ onFilter }) => {
     const [cookingTimeRange, setCookingTimeRange] = useState([0, 100]);
     const [cookingTimeRangeMin, setCookingTimeRangeMin] = useState(0);
     const [cookingTimeRangeMax, setCookingTimeRangeMax] = useState(100);
+    const [sortBy, setSortBy] = useState('');
+    const [sortOptions, setSortOptions] = useState([]);
 
     useEffect(() => {
         const fetchDefaultFilters = async () => {
@@ -32,60 +32,39 @@ const FilterSortButtons = ({ onFilter }) => {
         fetchDefaultFilters();
     }, []);
 
+    useEffect(() => {
+        const fetchSortOptions = async () => {
+            const options = await getSortOptions();
+            setSortOptions(options);
+        };
+        fetchSortOptions();
+    }, []);
+
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen);
     };
 
-    const handleFilter = () => {
+    const handleFilter = (filter) => {
+        const updatedFilter = {
+            ...filter,
+            sortBy,
+        };
+        onFilter(updatedFilter);
+        toggleDrawer();
+    };
+
+    const handleSort = (event, sortBy) => {
+        event.preventDefault();
+        setSortBy(sortBy);
         const filter = {
             createdFrom: new Date(createdRange[0]).toISOString(),
             createdTo: new Date(createdRange[1]).toISOString(),
             ingredientNames,
             cookingTimeFrom: cookingTimeRange[0],
             cookingTimeTo: cookingTimeRange[1],
+            sortBy,
         };
         onFilter(filter);
-        toggleDrawer();
-    };
-
-    const handleCreatedRangeChange = (_event, newValue, activeThumb) => {
-        const minDistance = 24 * 60 * 60 * 1000;
-
-        if (!Array.isArray(newValue)) {
-            return;
-        }
-
-        if (newValue[1] - newValue[0] < minDistance) {
-            if (activeThumb === 0) {
-                const clamped = Math.min(newValue[0], createdRangeMax - minDistance);
-                setCreatedRange([clamped, clamped + minDistance]);
-            } else {
-                const clamped = Math.max(newValue[1], createdRangeMin + minDistance);
-                setCreatedRange([clamped - minDistance, clamped]);
-            }
-        } else {
-            setCreatedRange(newValue);
-        }
-    };
-
-    const handleCookingTimeRangeChange = (_event, newValue, activeThumb) => {
-        const minDistance = 5;
-
-        if (!Array.isArray(newValue)) {
-            return;
-        }
-
-        if (newValue[1] - newValue[0] < minDistance) {
-            if (activeThumb === 0) {
-                const clamped = Math.min(newValue[0], cookingTimeRangeMax - minDistance);
-                setCookingTimeRange([clamped, clamped + minDistance]);
-            } else {
-                const clamped = Math.max(newValue[1], cookingTimeRangeMin + minDistance);
-                setCookingTimeRange([clamped - minDistance, clamped]);
-            }
-        } else {
-            setCookingTimeRange(newValue);
-        }
     };
 
     return (
@@ -94,53 +73,24 @@ const FilterSortButtons = ({ onFilter }) => {
                 <MDBBtn color='primary' onClick={toggleDrawer} className='me-2'>
                     <img src='/src/assets/filter.png' alt='Filter' style={{ width: '20px', height: '20px' }} /> Filter
                 </MDBBtn>
-                <MDBBtn color='secondary'>
-                    <img src='/src/assets/sort.png' alt='Sort' style={{ width: '20px', height: '20px' }} /> Sort
-                </MDBBtn>
+                <SortDropdown sortOptions={sortOptions} handleSort={handleSort} />
             </div>
-            <Offcanvas show={isDrawerOpen} onHide={toggleDrawer} placement='start'>
-                <OffcanvasHeader closeButton>
-                    <Offcanvas.Title>Filter Options</Offcanvas.Title>
-                </OffcanvasHeader>
-                <OffcanvasBody>
-                    <Autocomplete
-                        multiple
-                        options={allIngredientsNames}
-                        getOptionLabel={(option) => option}
-                        value={ingredientNames}
-                        onChange={(event, newValue) => setIngredientNames(newValue)}
-                        renderInput={(params) => (
-                            <TextField {...params} label='Ingredient Names' variant='outlined' className='mb-3' />
-                        )}
-                    />
-                    <div className='mb-3'>
-                        <label>Creation Date</label>
-                        <Slider
-                            value={createdRange}
-                            onChange={handleCreatedRangeChange}
-                            valueLabelDisplay='auto'
-                            min={createdRangeMin}
-                            max={createdRangeMax}
-                            step={24 * 60 * 60 * 1000}
-                            disableSwap
-                            valueLabelFormat={(value) => new Date(value).toLocaleDateString()}
-                        />
-                    </div>
-                    <div className='mb-3'>
-                        <label>Cooking Time (minutes)</label>
-                        <Slider
-                            value={cookingTimeRange}
-                            onChange={handleCookingTimeRangeChange}
-                            valueLabelDisplay='auto'
-                            min={cookingTimeRangeMin}
-                            max={cookingTimeRangeMax}
-                            step={1}
-                            disableSwap
-                        />
-                    </div>
-                    <MDBBtn color='primary' onClick={handleFilter}>Apply</MDBBtn>
-                </OffcanvasBody>
-            </Offcanvas>
+            <FilterDrawer
+                isDrawerOpen={isDrawerOpen}
+                toggleDrawer={toggleDrawer}
+                ingredientNames={ingredientNames}
+                setIngredientNames={setIngredientNames}
+                allIngredientsNames={allIngredientsNames}
+                createdRange={createdRange}
+                setCreatedRange={setCreatedRange}
+                createdRangeMin={createdRangeMin}
+                createdRangeMax={createdRangeMax}
+                cookingTimeRange={cookingTimeRange}
+                setCookingTimeRange={setCookingTimeRange}
+                cookingTimeRangeMin={cookingTimeRangeMin}
+                cookingTimeRangeMax={cookingTimeRangeMax}
+                handleFilter={handleFilter}
+            />
         </>
     );
 };

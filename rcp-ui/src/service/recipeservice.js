@@ -32,4 +32,9 @@ const getDefaultRecipeFilters = async () => {
     return response.data;
 }
 
-export { getRecipes, getUserRecipes, getDefaultRecipeFilters };
+const getSortOptions = async () => {
+    const response = await axios.get(`${API_URL_RECIPES}/sortOptions`);
+    return response.data;
+};
+
+export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getSortOptions };

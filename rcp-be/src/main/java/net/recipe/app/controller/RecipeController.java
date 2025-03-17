@@ -2,7 +2,8 @@ package net.recipe.app.controller;
 
 import lombok.RequiredArgsConstructor;
 import net.recipe.app.dto.RecipeDto;
-import net.recipe.app.dto.RecipeFilterDto;
+import net.recipe.app.dto.RecipeFilter;
+import net.recipe.app.dto.SortBy;
 import net.recipe.app.mapper.RecipeMapper;
 import net.recipe.app.service.RecipeService;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class RecipeController {
   private final RecipeMapper recipeMapper;
 
   @GetMapping
-  public List<RecipeDto> find(@ModelAttribute RecipeFilterDto recipeFilter) {
+  public List<RecipeDto> find(@ModelAttribute RecipeFilter recipeFilter) {
     return service.find(recipeFilter).stream()
         .map(recipeMapper::recipeToDto)
         .collect(Collectors.toList());
@@ -44,7 +45,12 @@ public class RecipeController {
   }
 
   @GetMapping("/filters")
-  public RecipeFilterDto getFilters() {
+  public RecipeFilter getFilters() {
     return service.getFilters();
+  }
+
+  @GetMapping("/sortOptions")
+  public SortBy[] getSortOptions() {
+    return SortBy.values();
   }
 }

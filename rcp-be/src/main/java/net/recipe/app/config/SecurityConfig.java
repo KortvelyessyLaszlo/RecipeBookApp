@@ -55,6 +55,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/recipe/filters")
                     .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipe/sortOptions")
+                    .permitAll()
                     .anyRequest()
                     .authenticated())
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

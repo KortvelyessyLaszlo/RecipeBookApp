@@ -1,8 +1,7 @@
 package net.recipe.app.service;
 
 import lombok.RequiredArgsConstructor;
-import net.recipe.app.dto.RecipeFilterDto;
-import net.recipe.app.entity.Ingredient;
+import net.recipe.app.dto.RecipeFilter;
 import net.recipe.app.entity.Recipe;
 import net.recipe.app.entity.User;
 import net.recipe.app.repository.RecipeRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,36 +24,8 @@ public class RecipeServiceImpl implements RecipeService {
   private final UserRepository userRepository;
 
   @Override
-  public List<Recipe> find(RecipeFilterDto recipeFilter) {
-
-    List<Recipe> allRecipes = recipeRepository.findAll();
-
-    return allRecipes.stream()
-        .filter(
-            r -> {
-              boolean matchesIngredients =
-                  recipeFilter.getIngredientNames() == null
-                      || recipeFilter.getIngredientNames().isEmpty()
-                      || r.getIngredients().stream()
-                          .map(Ingredient::getName)
-                          .collect(Collectors.toSet())
-                          .containsAll(recipeFilter.getIngredientNames());
-
-              boolean matchesDate =
-                  (recipeFilter.getCreatedFrom() == null
-                          || !r.getCreatedAt().isBefore(recipeFilter.getCreatedFrom()))
-                      && (recipeFilter.getCreatedTo() == null
-                          || !r.getCreatedAt().isAfter(recipeFilter.getCreatedTo()));
-
-              boolean matchesCookingTime =
-                  (recipeFilter.getCookingTimeFrom() == null
-                          || r.getCookingTime() >= recipeFilter.getCookingTimeFrom())
-                      && (recipeFilter.getCookingTimeTo() == null
-                          || r.getCookingTime() <= recipeFilter.getCookingTimeTo());
-
-              return matchesIngredients && matchesDate && matchesCookingTime;
-            })
-        .toList();
+  public List<Recipe> find(RecipeFilter recipeFilter) {
+    return recipeRepository.findFilteredRecipes(recipeFilter);
   }
 
   @Override
@@ -117,8 +87,8 @@ public class RecipeServiceImpl implements RecipeService {
   }
 
   @Override
-  public RecipeFilterDto getFilters() {
-    RecipeFilterDto recipeFilter = new RecipeFilterDto();
+  public RecipeFilter getFilters() {
+    RecipeFilter recipeFilter = new RecipeFilter();
     recipeFilter.setIngredientNames(new TreeSet<>(recipeRepository.findIngredientNames()));
     recipeFilter.setCreatedFrom(recipeRepository.findTopByOrderByCreatedAtAsc().getCreatedAt());
     recipeFilter.setCreatedTo(recipeRepository.findTopByOrderByCreatedAtDesc().getCreatedAt());
