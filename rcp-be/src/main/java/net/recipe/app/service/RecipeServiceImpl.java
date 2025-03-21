@@ -1,6 +1,7 @@
 package net.recipe.app.service;
 
 import lombok.RequiredArgsConstructor;
+import net.recipe.app.common.exception.ResourceNotFoundException;
 import net.recipe.app.dto.RecipeFilter;
 import net.recipe.app.entity.Recipe;
 import net.recipe.app.entity.User;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeSet;
 
 @Service
@@ -26,6 +28,13 @@ public class RecipeServiceImpl implements RecipeService {
   @Override
   public List<Recipe> find(RecipeFilter recipeFilter) {
     return recipeRepository.findFilteredRecipes(recipeFilter);
+  }
+
+  @Override
+  public Recipe findById(Long id) {
+    return recipeRepository
+        .findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Recipe with id " + id + " not found"));
   }
 
   @Override
@@ -47,21 +56,7 @@ public class RecipeServiceImpl implements RecipeService {
 
   @Override
   public Recipe update(Long id, Recipe newRecipe) {
-    String username =
-        ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
-            .getUsername();
-
-    User user = userRepository.findByUsername(username);
-    if (user == null) {
-      throw new UsernameNotFoundException("User not found");
-    }
-
-    Recipe recipe =
-        recipeRepository.findById(id).orElseThrow(() -> new RuntimeException("Recipe not found"));
-
-    if (!recipe.getAuthor().equals(user)) {
-      throw new RuntimeException("You are not authorized to edit this recipe");
-    }
+    Recipe recipe = getRecipeById(id);
 
     recipe.setTitle(newRecipe.getTitle());
     recipe.setIngredients(newRecipe.getIngredients());
@@ -97,5 +92,39 @@ public class RecipeServiceImpl implements RecipeService {
     recipeFilter.setCookingTimeTo(
         recipeRepository.findTopByOrderByCookingTimeDesc().getCookingTime());
     return recipeFilter;
+  }
+
+  @Override
+  public Set<String> getIngredients() {
+    return new TreeSet<>(recipeRepository.findIngredientNames());
+  }
+
+  @Override
+  public void delete(Long id) {
+    Recipe recipe = getRecipeById(id);
+
+    recipe.getAuthor().getRecipes().remove(recipe);
+    userRepository.save(recipe.getAuthor());
+  }
+
+  private Recipe getRecipeById(Long id) {
+    String username =
+        ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+            .getUsername();
+
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UsernameNotFoundException("User not found");
+    }
+
+    Recipe recipe =
+        recipeRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+
+    if (!recipe.getAuthor().equals(user)) {
+      throw new RuntimeException("You are not authorized to modify this recipe");
+    }
+    return recipe;
   }
 }

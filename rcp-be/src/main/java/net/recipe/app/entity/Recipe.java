@@ -21,6 +21,7 @@ public class Recipe {
   @ElementCollection(fetch = FetchType.EAGER)
   private Set<Ingredient> ingredients;
 
+  @Column(length = 10000)
   private String instructions;
 
   @ManyToOne private User author;

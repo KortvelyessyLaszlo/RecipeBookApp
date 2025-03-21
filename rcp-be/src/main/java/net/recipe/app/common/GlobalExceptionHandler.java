@@ -1,5 +1,6 @@
 package net.recipe.app.common;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import net.recipe.app.common.exception.ResourceNotFoundException;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,6 +31,11 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<String> handleAuthenticationException(AuthenticationException ex) {
+    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
+  }
+
+  @ExceptionHandler(ExpiredJwtException.class)
+  public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException ex) {
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
   }
 }

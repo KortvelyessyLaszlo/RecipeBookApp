@@ -89,7 +89,7 @@ const FilterDrawer = ({
                     )}
                 />
                 <div className='mb-3'>
-                    <label>Creation Date</label>
+                    <label>Upload Date</label>
                     <Slider
                         value={createdRange}
                         onChange={handleCreatedRangeChange}

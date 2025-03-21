@@ -9,6 +9,7 @@ import net.recipe.app.service.RecipeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
@@ -27,6 +28,11 @@ public class RecipeController {
         .collect(Collectors.toList());
   }
 
+  @GetMapping("/{id}")
+  public RecipeDto findById(@PathVariable Long id) {
+    return recipeMapper.recipeToDto(service.findById(id));
+  }
+
   @PostMapping
   public RecipeDto add(@RequestBody RecipeDto recipeDto) {
     return recipeMapper.recipeToDto(service.add(recipeMapper.dtoToRecipe(recipeDto)));
@@ -35,6 +41,11 @@ public class RecipeController {
   @PutMapping("/{id}")
   public RecipeDto update(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
     return recipeMapper.recipeToDto(service.update(id, recipeMapper.dtoToRecipe(recipeDto)));
+  }
+
+  @DeleteMapping("/{id}")
+  public void delete(@PathVariable Long id) {
+    service.delete(id);
   }
 
   @GetMapping("/myrecipes")
@@ -52,5 +63,10 @@ public class RecipeController {
   @GetMapping("/sortOptions")
   public SortBy[] getSortOptions() {
     return SortBy.values();
+  }
+
+  @GetMapping("/ingredients")
+  public Set<String> getIngredients() {
+    return service.getIngredients();
   }
 }

@@ -4,10 +4,13 @@ import PropTypes from 'prop-types';
 import { useEffect, useState } from 'react';
 import { getRecipes } from './service/recipeservice';
 import FilterSortButtons from './components/FilterSortButtons';
+import { useNavigate } from 'react-router-dom';
+import './styles/RecipeList.css';
 
 const RecipeList = ({ searchTerm }) => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRecipes();
@@ -22,6 +25,10 @@ const RecipeList = ({ searchTerm }) => {
     }
   };
 
+  const handleRecipeClick = (recipeId) => {
+    navigate(`/recipe/${recipeId}`);
+  };
+
   const filteredRecipes = recipes.filter((recipe) =>
     recipe.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -32,10 +39,10 @@ const RecipeList = ({ searchTerm }) => {
       <FilterSortButtons onFilter={fetchRecipes} />
       <MDBRow>
         {filteredRecipes.map((recipe) => (
-          <MDBCol key={recipe.id} className='mb-4 recipe-card' md='3' sm='6' xs='12'>
-            <MDBCard className='text-center' style={{ borderRadius: '10px' }}>
-              {recipe.image && <MDBCardImage src={`data:image/jpeg;base64,${recipe.image}`} alt={recipe.title} style={{ width: '100%', borderTopLeftRadius: '10px', borderTopRightRadius: '10px' }} />}
-              <MDBCardBody>
+          <MDBCol key={recipe.id} className='mb-4' md='3' sm='6' xs='12'>
+            <MDBCard className='text-center card' onClick={() => handleRecipeClick(recipe.id)}>
+              {recipe.image && <MDBCardImage src={`data:image/jpeg;base64,${recipe.image}`} alt={recipe.title} className='card-image' />}
+              <MDBCardBody className='card-body'>
                 <MDBCardTitle>{recipe.title}</MDBCardTitle>
               </MDBCardBody>
             </MDBCard>

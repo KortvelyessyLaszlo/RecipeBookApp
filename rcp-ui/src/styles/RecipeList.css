@@ -1,0 +1,42 @@
+.card-image {
+    height: 300px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.card {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-radius: 10px;
+    position: 'relative';
+    cursor: pointer;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.card:hover .card-buttons {
+    display: block;
+}
+
+.card-buttons {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.add-card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.add-card:hover {
+    transform: scale(1.03);
+}

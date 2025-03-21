@@ -37,4 +37,49 @@ const getSortOptions = async () => {
     return response.data;
 };
 
-export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getSortOptions };
+const getIngredients = async () => {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_URL_RECIPES}/ingredients`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+};
+
+const addRecipe = async (recipe) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(`${API_URL_RECIPES}`, recipe, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+}
+
+const getRecipeById = async (id) => {
+    const response = await axios.get(`${API_URL_RECIPES}/${id}`);
+    return response.data;
+};
+
+const deleteRecipeById = async (id) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.delete(`${API_URL_RECIPES}/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+}
+
+const updateRecipe = async (id, recipe) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.put(`${API_URL_RECIPES}/${id}`, recipe, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+    return response.data;
+}
+
+export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getSortOptions, getIngredients, addRecipe, getRecipeById, deleteRecipeById, updateRecipe };

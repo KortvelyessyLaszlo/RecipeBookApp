@@ -53,6 +53,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/recipe")
                     .permitAll()
+                    .requestMatchers(HttpMethod.GET, "/api/recipe/{id}")
+                    .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/recipe/filters")
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/api/recipe/sortOptions")
