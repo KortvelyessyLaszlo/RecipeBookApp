@@ -16,4 +16,5 @@ public class RecipeDto {
   private LocalDate createdAt;
   private byte[] image;
   private int cookingTime;
+  private String author;
 }

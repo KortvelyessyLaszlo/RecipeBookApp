@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import RecipeList from './RecipeList';
-import TopBar from './TopBar';
+import TopBar from './components/TopBar';
 
 function Home() {
   const [searchTerm, setSearchTerm] = useState('');

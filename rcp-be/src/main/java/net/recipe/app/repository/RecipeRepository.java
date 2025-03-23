@@ -16,6 +16,4 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long>, RecipeRep
   Recipe findTopByOrderByCookingTimeDesc();
 
   Recipe findTopByOrderByCookingTimeAsc();
-
-  List<String> findIngredientNames();
 }

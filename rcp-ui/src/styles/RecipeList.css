@@ -5,23 +5,6 @@
     border-top-right-radius: 10px;
 }
 
-.card {
-    height: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-radius: 10px;
-    position: 'relative';
-    cursor: pointer;
-}
-
-.card-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    flex-grow: 1;
-}
-
 .card:hover .card-buttons {
     display: block;
 }
@@ -33,10 +16,24 @@
     right: 10px;
 }
 
-.add-card {
+.card {
     transition: transform 0.2s ease-in-out;
 }
 
-.add-card:hover {
-    transform: scale(1.03);
+.RecipeList .card:hover,
+.MyRecipesList .card:hover {
+    cursor: pointer;
+    transform: scale(1.02);
 }
+
+.card-author, .card-cooking-time {
+  color: #6c757d;
+}
+
+.chef-icon {
+  margin-right: 5px;
+}
+
+.clock-icon {
+    margin-right: 5px;
+  }

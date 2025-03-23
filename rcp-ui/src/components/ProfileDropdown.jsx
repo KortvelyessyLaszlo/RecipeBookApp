@@ -41,7 +41,9 @@ const ProfileDropdown = () => {
                 {loggedIn ? (
                     <>
                         <MDBDropdownItem link onClick={handleMyRecipesClick}>My recipes</MDBDropdownItem>
-                        <MDBDropdownItem link onClick={handleLogout}>Logout</MDBDropdownItem>
+                        <MDBDropdownItem link onClick={handleLogout}>
+                            <span style={{ color: 'red' }}>Logout</span>
+                        </MDBDropdownItem>
                     </>
                 ) : (
                     <>

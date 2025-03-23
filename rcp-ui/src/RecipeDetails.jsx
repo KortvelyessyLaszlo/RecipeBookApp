@@ -21,10 +21,13 @@ const RecipeDetails = () => {
         <MDBContainer className='mt-4'>
             <MDBRow className='justify-content-center'>
                 <MDBCol md='8'>
-                    <MDBCard className='w-100'>
+                    <MDBCard className='w-100 recipe-details-card'>
                         <MDBCardImage src={`data:image/jpeg;base64,${recipe.image}`} alt={recipe.title} position='top' />
                         <MDBCardBody>
                             <MDBCardTitle>{recipe.title}</MDBCardTitle>
+                            <MDBCardText>
+                                <strong>Author:</strong> {recipe.author}
+                            </MDBCardText>
                             <MDBCardText>{recipe.instructions}</MDBCardText>
                             <MDBCardText><strong>Cooking Time:</strong> {recipe.cookingTime} minutes</MDBCardText>
                             <MDBCardText><strong>Ingredients:</strong></MDBCardText>

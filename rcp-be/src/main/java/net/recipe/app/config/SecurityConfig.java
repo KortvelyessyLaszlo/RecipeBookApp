@@ -51,13 +51,12 @@ public class SecurityConfig {
             auth ->
                 auth.requestMatchers("/api/auth/login", "/api/auth/register")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/recipe")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/recipe/{id}")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/recipe/filters")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/api/recipe/sortOptions")
+                    .requestMatchers(
+                        HttpMethod.GET,
+                        "/api/recipe",
+                        "/api/recipe/{id}",
+                        "/api/recipe/filters",
+                        "/api/recipe/sortOptions")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

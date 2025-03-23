@@ -20,7 +20,7 @@ const SearchBar = ({ onSearch }) => {
         <MDBInputGroup className="search-bar">
             <MDBInput
                 type="text"
-                placeholder="Search recipes..."
+                placeholder="Search recipes or authors..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleKeyDown}
