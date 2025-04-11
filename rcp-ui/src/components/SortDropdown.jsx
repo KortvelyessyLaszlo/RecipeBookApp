@@ -1,10 +1,7 @@
 import { MDBDropdown, MDBDropdownToggle, MDBDropdownMenu, MDBDropdownItem } from 'mdb-react-ui-kit';
 import PropTypes from 'prop-types';
 
-const SortDropdown = ({ sortOptions, handleSort }) => {
-    const formatSortOption = (option) => {
-        return option.replace(/([A-Z])/g, ' $1').trim();
-    };
+const SortDropdown = ({ handleSort }) => {
 
     return (
         <MDBDropdown>
@@ -12,18 +9,15 @@ const SortDropdown = ({ sortOptions, handleSort }) => {
                 <img src='/src/assets/sort.png' alt="Profile" style={{ width: '20px', height: '20px' }} /> Sort By
             </MDBDropdownToggle>
             <MDBDropdownMenu>
-                {sortOptions.map((option) => (
-                    <MDBDropdownItem link key={option} onClick={(event) => handleSort(event, option)}>
-                        {formatSortOption(option)}
-                    </MDBDropdownItem>
-                ))}
+                <MDBDropdownItem link onClick={(e) => handleSort(e, 'createdAt', 'desc')}>Most Recent</MDBDropdownItem>
+                <MDBDropdownItem link onClick={(e) => handleSort(e, 'cookingTime', 'asc')}>Quickest</MDBDropdownItem>
+                <MDBDropdownItem link onClick={(e) => handleSort(e, 'title', 'asc')}>Title</MDBDropdownItem>
             </MDBDropdownMenu>
         </MDBDropdown>
     );
 };
 
 SortDropdown.propTypes = {
-    sortOptions: PropTypes.array.isRequired,
     handleSort: PropTypes.func.isRequired,
 };
 

@@ -12,5 +12,4 @@ public class RecipeFilter {
   private Set<String> ingredientNames;
   private Integer cookingTimeFrom;
   private Integer cookingTimeTo;
-  private SortBy sortBy;
 }

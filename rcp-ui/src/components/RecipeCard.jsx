@@ -11,15 +11,15 @@ const RecipeCard = ({ recipe, onRecipeClick, onEditClick, onDeleteClick }) => {
             {recipe.image && <MDBCardImage src={`data:image/jpeg;base64,${recipe.image}`} alt={recipe.title} className='card-image' />}
             <MDBCardBody className='card-body'>
                 <MDBCardTitle>{recipe.title}</MDBCardTitle>
-                <div className='d-flex justify-content-between'>
-                    <div className='d-flex align-items-center'>
-                        <img src={chefIcon} alt='Chef' className='chef-icon' width={20} height={20} />
-                        <span className='card-author'>{recipe.author}</span>
-                    </div>
-                    <div className='d-flex align-items-center'>
-                        <img src={clockIcon} alt='Clock' className='clock-icon' width={20} height={20} />
-                        <span className='card-cooking-time'>{recipe.cookingTime} mins</span>
-                    </div>
+                <div className='d-flex flex-wrap justify-content-between'>
+                  <div className='d-flex align-items-center mb-1 me-2'>
+                    <img src={chefIcon} alt='Chef' className='chef-icon' width={20} height={20}/>
+                    <span className='card-author'>{recipe.author}</span>
+                  </div>
+                  <div className='d-flex align-items-center mb-1'>
+                    <img src={clockIcon} alt='Clock' className='clock-icon' width={20} height={20}/>
+                    <span className='card-cooking-time'>{recipe.cookingTime} mins</span>
+                  </div>
                 </div>
                 <div className='card-buttons'>
                     <MDBBtn size='sm' color='light' className='me-2' onClick={(e) => { e.stopPropagation(); onEditClick(recipe.id); }}>

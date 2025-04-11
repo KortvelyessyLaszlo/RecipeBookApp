@@ -1,7 +1,7 @@
 import { MDBBtn } from 'mdb-react-ui-kit';
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { getDefaultRecipeFilters, getSortOptions } from '../service/recipeservice';
+import { getDefaultRecipeFilters } from '../service/recipeservice';
 import FilterDrawer from './FilterDrawer';
 import SortDropdown from './SortDropdown';
 
@@ -15,8 +15,7 @@ const FilterSortButtons = ({ onFilter }) => {
     const [cookingTimeRange, setCookingTimeRange] = useState([0, 100]);
     const [cookingTimeRangeMin, setCookingTimeRangeMin] = useState(0);
     const [cookingTimeRangeMax, setCookingTimeRangeMax] = useState(100);
-    const [sortBy, setSortBy] = useState('');
-    const [sortOptions, setSortOptions] = useState([]);
+    const [sort, setSort] = useState('');
 
     useEffect(() => {
         const fetchDefaultFilters = async () => {
@@ -32,39 +31,33 @@ const FilterSortButtons = ({ onFilter }) => {
         fetchDefaultFilters();
     }, []);
 
-    useEffect(() => {
-        const fetchSortOptions = async () => {
-            const options = await getSortOptions();
-            setSortOptions(options);
-        };
-        fetchSortOptions();
-    }, []);
-
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen);
     };
 
     const handleFilter = (filter) => {
         const updatedFilter = {
-            ...filter,
-            sortBy,
+            ...filter
         };
-        onFilter(updatedFilter);
+        
+        onFilter(updatedFilter, sort);
         toggleDrawer();
     };
 
-    const handleSort = (event, sortBy) => {
+    const handleSort = (event, sort, order) => {
         event.preventDefault();
-        setSortBy(sortBy);
+        const sortValue = `${sort},${order}`;
+        setSort(sortValue);
+        
         const filter = {
             createdFrom: new Date(createdRange[0]).toISOString(),
             createdTo: new Date(createdRange[1]).toISOString(),
             ingredientNames,
             cookingTimeFrom: cookingTimeRange[0],
-            cookingTimeTo: cookingTimeRange[1],
-            sortBy,
+            cookingTimeTo: cookingTimeRange[1]
         };
-        onFilter(filter);
+        
+        onFilter(filter, sortValue);
     };
 
     return (
@@ -73,7 +66,7 @@ const FilterSortButtons = ({ onFilter }) => {
                 <MDBBtn color='primary' onClick={toggleDrawer} className='me-2'>
                     <img src='/src/assets/filter.png' alt='Filter' style={{ width: '20px', height: '20px' }} /> Filter
                 </MDBBtn>
-                <SortDropdown sortOptions={sortOptions} handleSort={handleSort} />
+                <SortDropdown handleSort={handleSort} />
             </div>
             <FilterDrawer
                 isDrawerOpen={isDrawerOpen}

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,4 +33,11 @@ public class Recipe {
   @Lob private byte[] image;
 
   private int cookingTime;
+
+  @OneToMany(
+      mappedBy = "recipe",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
+  private List<Comment> comments;
 }

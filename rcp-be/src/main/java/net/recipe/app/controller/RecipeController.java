@@ -3,9 +3,10 @@ package net.recipe.app.controller;
 import lombok.RequiredArgsConstructor;
 import net.recipe.app.dto.RecipeDto;
 import net.recipe.app.dto.RecipeFilter;
-import net.recipe.app.dto.SortBy;
 import net.recipe.app.mapper.RecipeMapper;
 import net.recipe.app.service.RecipeService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,10 +23,8 @@ public class RecipeController {
   private final RecipeMapper recipeMapper;
 
   @GetMapping
-  public List<RecipeDto> find(@ModelAttribute RecipeFilter recipeFilter) {
-    return service.find(recipeFilter).stream()
-        .map(recipeMapper::recipeToDto)
-        .collect(Collectors.toList());
+  public Page<RecipeDto> find(@ModelAttribute RecipeFilter recipeFilter, Pageable pageable) {
+    return service.find(recipeFilter, pageable).map(recipeMapper::recipeToDto);
   }
 
   @GetMapping("/{id}")
@@ -58,11 +57,6 @@ public class RecipeController {
   @GetMapping("/filters")
   public RecipeFilter getFilters() {
     return service.getFilters();
-  }
-
-  @GetMapping("/sortOptions")
-  public SortBy[] getSortOptions() {
-    return SortBy.values();
   }
 
   @GetMapping("/ingredients")

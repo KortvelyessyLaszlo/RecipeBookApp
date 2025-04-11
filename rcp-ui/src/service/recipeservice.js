@@ -6,13 +6,36 @@ const API_URL_RECIPES = 'http://localhost:8080/api/recipe';
 
 const formatDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
-const getRecipes = async (filter = {}) => {
+const getRecipes = async (filter = {}, page = 0, size = 20, sort = '') => {
+    const pagination = {
+        page,
+        size
+    };
+
     if (filter.createdFrom) filter.createdFrom = formatDate(filter.createdFrom);
     if (filter.createdTo) filter.createdTo = formatDate(filter.createdTo);
-    const query = qs.stringify(filter, { arrayFormat: 'repeat' });
+
+    const params = {
+        ...filter,
+        ...pagination,
+        sort
+    };
+
+    const query = qs.stringify(params, { arrayFormat: 'repeat' });
     const response = await axios.get(`${API_URL_RECIPES}?${query}`);
-    return response.data;
-};
+
+    const responseData = response.data;
+
+    return {
+        data: responseData.content || responseData,
+        metadata: {
+            totalPages: responseData.page.totalPages,
+            totalElements: responseData.page.totalElements,
+            size: responseData.page.size,
+            number: responseData.page.number
+        }
+    };
+}
 
 const getUserRecipes = async (filter = {}) => {
     const token = localStorage.getItem('token');
@@ -31,11 +54,6 @@ const getDefaultRecipeFilters = async () => {
     const response = await axios.get(`${API_URL_RECIPES}/filters`);
     return response.data;
 }
-
-const getSortOptions = async () => {
-    const response = await axios.get(`${API_URL_RECIPES}/sortOptions`);
-    return response.data;
-};
 
 const getIngredients = async () => {
     const token = localStorage.getItem('token');
@@ -82,4 +100,4 @@ const updateRecipe = async (id, recipe) => {
     return response.data;
 }
 
-export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getSortOptions, getIngredients, addRecipe, getRecipeById, deleteRecipeById, updateRecipe };
+export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getIngredients, addRecipe, getRecipeById, deleteRecipeById, updateRecipe };

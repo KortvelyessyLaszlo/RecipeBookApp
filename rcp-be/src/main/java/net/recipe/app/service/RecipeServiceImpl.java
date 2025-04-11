@@ -3,10 +3,14 @@ package net.recipe.app.service;
 import lombok.RequiredArgsConstructor;
 import net.recipe.app.common.exception.ResourceNotFoundException;
 import net.recipe.app.dto.RecipeFilter;
+import net.recipe.app.entity.Ingredient;
 import net.recipe.app.entity.Recipe;
 import net.recipe.app.entity.User;
 import net.recipe.app.repository.RecipeRepository;
+import net.recipe.app.repository.RecipeSpecification;
 import net.recipe.app.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,8 +31,9 @@ public class RecipeServiceImpl implements RecipeService {
   private final UserRepository userRepository;
 
   @Override
-  public List<Recipe> find(RecipeFilter recipeFilter) {
-    return recipeRepository.findFilteredRecipes(recipeFilter);
+  public Page<Recipe> find(RecipeFilter recipeFilter, Pageable pageable) {
+    return recipeRepository.findAll(
+        RecipeSpecification.filterByRecipeFilter(recipeFilter), pageable);
   }
 
   @Override
@@ -84,7 +90,7 @@ public class RecipeServiceImpl implements RecipeService {
   @Override
   public RecipeFilter getFilters() {
     RecipeFilter recipeFilter = new RecipeFilter();
-    recipeFilter.setIngredientNames(new TreeSet<>(recipeRepository.findIngredientNames()));
+    recipeFilter.setIngredientNames(getIngredients());
     recipeFilter.setCreatedFrom(recipeRepository.findTopByOrderByCreatedAtAsc().getCreatedAt());
     recipeFilter.setCreatedTo(recipeRepository.findTopByOrderByCreatedAtDesc().getCreatedAt());
     recipeFilter.setCookingTimeFrom(
@@ -96,7 +102,16 @@ public class RecipeServiceImpl implements RecipeService {
 
   @Override
   public Set<String> getIngredients() {
-    return new TreeSet<>(recipeRepository.findIngredientNames());
+    Set<String> ingredients = new TreeSet<>();
+    recipeRepository
+        .findAll()
+        .forEach(
+            recipe ->
+                ingredients.addAll(
+                    recipe.getIngredients().stream()
+                        .map(Ingredient::getName)
+                        .collect(Collectors.toSet())));
+    return ingredients;
   }
 
   @Override
