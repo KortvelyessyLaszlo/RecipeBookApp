@@ -3,13 +3,11 @@ package net.recipe.app.dto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
-
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class CommentDto {
+public class RatingDto {
   @EqualsAndHashCode.Include private Long id;
-  private String text;
   private String user;
-  private LocalDate createdAt;
+  private Long recipeId;
+  private Integer value;
 }

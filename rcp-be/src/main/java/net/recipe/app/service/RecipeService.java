@@ -1,6 +1,7 @@
 package net.recipe.app.service;
 
 import net.recipe.app.dto.RecipeFilter;
+import net.recipe.app.entity.Rating;
 import net.recipe.app.entity.Recipe;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,4 +25,6 @@ public interface RecipeService {
   Set<String> getIngredients();
 
   void delete(Long id);
+
+  Rating upsertRating(Long id, Integer value);
 }

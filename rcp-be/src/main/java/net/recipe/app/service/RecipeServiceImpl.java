@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import net.recipe.app.common.exception.ResourceNotFoundException;
 import net.recipe.app.dto.RecipeFilter;
 import net.recipe.app.entity.Ingredient;
+import net.recipe.app.entity.Rating;
 import net.recipe.app.entity.Recipe;
 import net.recipe.app.entity.User;
+import net.recipe.app.repository.RatingRepository;
 import net.recipe.app.repository.RecipeRepository;
 import net.recipe.app.repository.RecipeSpecification;
 import net.recipe.app.repository.UserRepository;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -29,6 +32,8 @@ public class RecipeServiceImpl implements RecipeService {
   private final RecipeRepository recipeRepository;
 
   private final UserRepository userRepository;
+
+  private final RatingRepository ratingRepository;
 
   @Override
   public Page<Recipe> find(RecipeFilter recipeFilter, Pageable pageable) {
@@ -120,6 +125,41 @@ public class RecipeServiceImpl implements RecipeService {
 
     recipe.getAuthor().getRecipes().remove(recipe);
     userRepository.save(recipe.getAuthor());
+  }
+
+  @Override
+  public Rating upsertRating(Long id, Integer value) {
+
+    String username =
+        ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+            .getUsername();
+
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      throw new UsernameNotFoundException("User not found");
+    }
+
+    Recipe recipe =
+        recipeRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResourceNotFoundException("Recipe with id " + id + " not found"));
+
+    Optional<Rating> existingRating = ratingRepository.findRatingByUserAndRecipe(user, recipe);
+
+    if (existingRating.isPresent()) {
+      Rating rating = existingRating.get();
+      rating.setValue(value);
+      return ratingRepository.save(rating);
+    }
+
+    Rating rating = new Rating();
+    rating.setUser(user);
+    rating.setRecipe(recipe);
+    rating.setValue(value);
+    recipe.getRatings().add(rating);
+    recipeRepository.save(recipe);
+    return rating;
   }
 
   private Recipe getRecipeById(Long id) {

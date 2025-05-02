@@ -4,12 +4,10 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.time.LocalDate;
-
 @Entity
 @Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Comment {
+public class Rating {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @EqualsAndHashCode.Include
@@ -21,9 +19,13 @@ public class Comment {
   @ManyToOne(optional = false)
   private Recipe recipe;
 
-  @Column(nullable = false, length = 1000)
-  private String text;
+  @Column(nullable = false)
+  private Integer value;
 
-  @Temporal(TemporalType.DATE)
-  private LocalDate createdAt;
+  public void setValue(Integer value) {
+    if (value != null && (value < 1 || value > 5)) {
+      throw new IllegalArgumentException("Rating must be between 1 and 5");
+    }
+    this.value = value;
+  }
 }

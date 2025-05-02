@@ -1,8 +1,11 @@
 package net.recipe.app.controller;
 
 import lombok.RequiredArgsConstructor;
+import net.recipe.app.dto.RatingDto;
 import net.recipe.app.dto.RecipeDto;
 import net.recipe.app.dto.RecipeFilter;
+import net.recipe.app.entity.Rating;
+import net.recipe.app.mapper.RatingMapper;
 import net.recipe.app.mapper.RecipeMapper;
 import net.recipe.app.service.RecipeService;
 import org.springframework.data.domain.Page;
@@ -21,6 +24,8 @@ public class RecipeController {
   private final RecipeService service;
 
   private final RecipeMapper recipeMapper;
+
+  private final RatingMapper ratingMapper;
 
   @GetMapping
   public Page<RecipeDto> find(@ModelAttribute RecipeFilter recipeFilter, Pageable pageable) {
@@ -52,6 +57,19 @@ public class RecipeController {
     return service.findByUser().stream()
         .map(recipeMapper::recipeToDto)
         .collect(Collectors.toList());
+  }
+
+  @GetMapping("/{id}/rating")
+  public double getRating(@PathVariable Long id) {
+    return service.findById(id).getRatings().stream()
+        .mapToInt(Rating::getValue)
+        .average()
+        .orElse(0);
+  }
+
+  @PutMapping("/{id}/rating")
+  public RatingDto addRating(@PathVariable Long id, @RequestBody Integer value) {
+    return ratingMapper.ratingToDto(service.upsertRating(id, value));
   }
 
   @GetMapping("/filters")

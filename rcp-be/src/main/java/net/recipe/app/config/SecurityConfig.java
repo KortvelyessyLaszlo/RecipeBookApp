@@ -57,6 +57,7 @@ public class SecurityConfig {
                         "/api/recipe/{id}",
                         "/api/recipe/filters",
                         "/api/recipe/sortOptions",
+                        "/api/recipe/{id}/rating",
                         "/api/comment/{id}")
                     .permitAll()
                     .anyRequest()

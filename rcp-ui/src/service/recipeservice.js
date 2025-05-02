@@ -100,4 +100,20 @@ const updateRecipe = async (id, recipe) => {
     return response.data;
 }
 
-export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getIngredients, addRecipe, getRecipeById, deleteRecipeById, updateRecipe };
+const getRecipeRating = async (id) => {
+    const response = await axios.get(`${API_URL_RECIPES}/${id}/rating`);
+    return response.data;
+};
+
+const submitRating = async (id, ratingValue) => {
+    const token = localStorage.getItem('token');
+    const response = await axios.put(`${API_URL_RECIPES}/${id}/rating`, ratingValue, {
+        headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.data;
+};
+
+export { getRecipes, getUserRecipes, getDefaultRecipeFilters, getIngredients, addRecipe, getRecipeById, deleteRecipeById, updateRecipe, getRecipeRating, submitRating };

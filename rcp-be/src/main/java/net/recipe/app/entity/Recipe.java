@@ -40,4 +40,11 @@ public class Recipe {
       orphanRemoval = true,
       fetch = FetchType.EAGER)
   private List<Comment> comments;
+
+  @OneToMany(
+      mappedBy = "recipe",
+      cascade = CascadeType.ALL,
+      orphanRemoval = true,
+      fetch = FetchType.EAGER)
+  private List<Rating> ratings;
 }
