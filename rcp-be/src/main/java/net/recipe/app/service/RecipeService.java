@@ -27,4 +27,8 @@ public interface RecipeService {
   void delete(Long id);
 
   Rating upsertRating(Long id, Integer value);
+
+  List<Recipe> findAll();
+
+  void deleteByAdmin(Long recipeId);
 }

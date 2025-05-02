@@ -36,10 +36,25 @@ const checkAuth = async () => {
   }
 };
 
+const checkAdminRole = async () => {
+  const token = getToken();
+  if (!token) return false;
+  
+  try {
+    const response = await axios.get(API_URL + 'checkAdminRole', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.status === 200;
+  } catch {
+    return false;
+  }
+};
+
 const AuthService = {
   login,
   logout,
   checkAuth,
+  checkAdminRole,
 };
 
 export default AuthService;

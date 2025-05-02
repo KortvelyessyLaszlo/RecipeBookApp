@@ -7,6 +7,7 @@ import net.recipe.app.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -26,10 +27,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public void delete(Long userId) {
-    userRepository
-        .findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
-    userRepository.deleteById(userId);
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+    userRepository.delete(user);
   }
 
   @Override
@@ -37,5 +39,25 @@ public class UserServiceImpl implements UserService {
     return userRepository
         .findById(userId)
         .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+  }
+
+  @Override
+  public List<User> findAll() {
+    return userRepository.findAll();
+  }
+
+  @Override
+  public void updateUserRole(Long userId, String role) {
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
+    if (role.equalsIgnoreCase("ADMIN")) {
+      user.getRoles().add(role);
+    } else if (role.equalsIgnoreCase("USER")) {
+      user.getRoles().remove("ADMIN");
+    }
+    userRepository.save(user);
   }
 }

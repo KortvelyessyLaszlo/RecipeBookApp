@@ -56,10 +56,11 @@ public class SecurityConfig {
                         "/api/recipe",
                         "/api/recipe/{id}",
                         "/api/recipe/filters",
-                        "/api/recipe/sortOptions",
                         "/api/recipe/{id}/rating",
                         "/api/comment/{id}")
                     .permitAll()
+                    .requestMatchers("/api/auth/checkAdminRole", "/api/admin/**")
+                    .hasAuthority("ADMIN")
                     .anyRequest()
                     .authenticated())
         .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);

@@ -6,12 +6,18 @@ import { useNavigate } from 'react-router-dom';
 
 const ProfileDropdown = () => {
     const [loggedIn, setLoggedIn] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         const checkAuthentication = async () => {
             const isAuthenticated = await AuthService.checkAuth();
             setLoggedIn(isAuthenticated);
+            
+            if (isAuthenticated) {
+                const adminStatus = await AuthService.checkAdminRole();
+                setIsAdmin(adminStatus);
+            }
         };
         checkAuthentication();
     }, []);
@@ -25,11 +31,17 @@ const ProfileDropdown = () => {
         event.preventDefault();
         AuthService.logout();
         setLoggedIn(false);
+        setIsAdmin(false);
     };
 
     const handleMyRecipesClick = (event) => {
         event.preventDefault();
         navigate('/my-recipes');
+    };
+    
+    const handleAdminClick = (event) => {
+        event.preventDefault();
+        navigate('/admin');
     };
 
     return (
@@ -41,6 +53,11 @@ const ProfileDropdown = () => {
                 {loggedIn ? (
                     <>
                         <MDBDropdownItem link onClick={handleMyRecipesClick}>My recipes</MDBDropdownItem>
+                        {isAdmin && (
+                            <MDBDropdownItem link onClick={handleAdminClick}>
+                                <span style={{ color: '#5b38e6' }}>Admin Dashboard</span>
+                            </MDBDropdownItem>
+                        )}
                         <MDBDropdownItem link onClick={handleLogout}>
                             <span style={{ color: 'red' }}>Logout</span>
                         </MDBDropdownItem>

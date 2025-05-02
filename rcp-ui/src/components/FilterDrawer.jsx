@@ -19,6 +19,8 @@ const FilterDrawer = ({
     setCookingTimeRange,
     cookingTimeRangeMin,
     cookingTimeRangeMax,
+    minRating,
+    setMinRating,
     handleFilter,
 }) => {
     const handleCreatedRangeChange = (_event, newValue, activeThumb) => {
@@ -68,6 +70,7 @@ const FilterDrawer = ({
             ingredientNames,
             cookingTimeFrom: cookingTimeRange[0],
             cookingTimeTo: cookingTimeRange[1],
+            minRating: minRating,
         };
         handleFilter(filter);
     };
@@ -100,8 +103,7 @@ const FilterDrawer = ({
                         disableSwap
                         valueLabelFormat={(value) => new Date(value).toLocaleDateString()}
                     />
-                </div>
-                <div className='mb-3'>
+                </div>                <div className='mb-3'>
                     <label>Cooking Time (minutes)</label>
                     <Slider
                         value={cookingTimeRange}
@@ -111,6 +113,25 @@ const FilterDrawer = ({
                         max={cookingTimeRangeMax}
                         step={1}
                         disableSwap
+                    />
+                </div>
+                <div className='mb-3'>
+                    <label>Minimum Rating</label>
+                    <Slider
+                        value={minRating}
+                        onChange={(_, newValue) => setMinRating(newValue)}
+                        valueLabelDisplay='auto'
+                        min={0}
+                        max={5}
+                        step={0.5}
+                        marks={[
+                            { value: 0, label: '0' },
+                            { value: 1, label: '1' },
+                            { value: 2, label: '2' },
+                            { value: 3, label: '3' },
+                            { value: 4, label: '4' },
+                            { value: 5, label: '5' }
+                        ]}
                     />
                 </div>
                 <MDBBtn color='primary' onClick={applyFilter}>Apply</MDBBtn>
@@ -134,6 +155,8 @@ FilterDrawer.propTypes = {
     cookingTimeRangeMin: PropTypes.number.isRequired,
     cookingTimeRangeMax: PropTypes.number.isRequired,
     handleFilter: PropTypes.func.isRequired,
+    setMinRating: PropTypes.func.isRequired,
+    minRating: PropTypes.number.isRequired,
 };
 
 export default FilterDrawer;

@@ -15,6 +15,7 @@ const FilterSortButtons = ({ onFilter }) => {
     const [cookingTimeRange, setCookingTimeRange] = useState([0, 100]);
     const [cookingTimeRangeMin, setCookingTimeRangeMin] = useState(0);
     const [cookingTimeRangeMax, setCookingTimeRangeMax] = useState(100);
+    const [minRating, setMinRating] = useState(0);
     const [sort, setSort] = useState('');
 
     useEffect(() => {
@@ -33,9 +34,7 @@ const FilterSortButtons = ({ onFilter }) => {
 
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen);
-    };
-
-    const handleFilter = (filter) => {
+    };    const handleFilter = (filter) => {
         const updatedFilter = {
             ...filter
         };
@@ -54,7 +53,8 @@ const FilterSortButtons = ({ onFilter }) => {
             createdTo: new Date(createdRange[1]).toISOString(),
             ingredientNames,
             cookingTimeFrom: cookingTimeRange[0],
-            cookingTimeTo: cookingTimeRange[1]
+            cookingTimeTo: cookingTimeRange[1],
+            minRating: minRating
         };
         
         onFilter(filter, sortValue);
@@ -67,8 +67,7 @@ const FilterSortButtons = ({ onFilter }) => {
                     <img src='/src/assets/filter.png' alt='Filter' style={{ width: '20px', height: '20px' }} /> Filter
                 </MDBBtn>
                 <SortDropdown handleSort={handleSort} />
-            </div>
-            <FilterDrawer
+            </div>            <FilterDrawer
                 isDrawerOpen={isDrawerOpen}
                 toggleDrawer={toggleDrawer}
                 ingredientNames={ingredientNames}
@@ -82,6 +81,8 @@ const FilterSortButtons = ({ onFilter }) => {
                 setCookingTimeRange={setCookingTimeRange}
                 cookingTimeRangeMin={cookingTimeRangeMin}
                 cookingTimeRangeMax={cookingTimeRangeMax}
+                minRating={minRating}
+                setMinRating={setMinRating}
                 handleFilter={handleFilter}
             />
         </>

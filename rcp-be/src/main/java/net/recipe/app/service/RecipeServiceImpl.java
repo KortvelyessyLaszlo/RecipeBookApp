@@ -12,7 +12,10 @@ import net.recipe.app.repository.RecipeRepository;
 import net.recipe.app.repository.RecipeSpecification;
 import net.recipe.app.repository.UserRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -37,6 +40,31 @@ public class RecipeServiceImpl implements RecipeService {
 
   @Override
   public Page<Recipe> find(RecipeFilter recipeFilter, Pageable pageable) {
+    Sort.Order ratingOrder = pageable.getSort().getOrderFor("rating");
+
+    if (ratingOrder != null) {
+      Page<Recipe> page =
+          recipeRepository.findAll(
+              RecipeSpecification.filterByRecipeFilter(recipeFilter),
+              PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.unsorted()));
+
+      List<Recipe> sortedContent =
+          page.getContent().stream()
+              .sorted(
+                  (r1, r2) -> {
+                    double avg1 =
+                        r1.getRatings().stream().mapToInt(Rating::getValue).average().orElse(0);
+                    double avg2 =
+                        r2.getRatings().stream().mapToInt(Rating::getValue).average().orElse(0);
+                    return ratingOrder.getDirection() == Sort.Direction.DESC
+                        ? Double.compare(avg2, avg1)
+                        : Double.compare(avg1, avg2);
+                  })
+              .toList();
+
+      return new PageImpl<>(sortedContent, pageable, page.getTotalElements());
+    }
+
     return recipeRepository.findAll(
         RecipeSpecification.filterByRecipeFilter(recipeFilter), pageable);
   }
@@ -160,6 +188,21 @@ public class RecipeServiceImpl implements RecipeService {
     recipe.getRatings().add(rating);
     recipeRepository.save(recipe);
     return rating;
+  }
+
+  @Override
+  public List<Recipe> findAll() {
+    return recipeRepository.findAll();
+  }
+
+  @Override
+  public void deleteByAdmin(Long recipeId) {
+    Recipe recipe =
+        recipeRepository
+            .findById(recipeId)
+            .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+    recipe.getAuthor().getRecipes().remove(recipe);
+    userRepository.save(recipe.getAuthor());
   }
 
   private Recipe getRecipeById(Long id) {

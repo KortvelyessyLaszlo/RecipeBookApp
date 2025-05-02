@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.recipe.app.dto.UserDto;
 import net.recipe.app.mapper.UserMapper;
 import net.recipe.app.security.JwtUtil;
+
 import net.recipe.app.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -51,6 +52,11 @@ public class AuthController {
 
   @GetMapping("/check")
   public ResponseEntity<?> checkTokenValidity() {
+    return ResponseEntity.ok().build();
+  }
+
+  @GetMapping("/checkAdminRole")
+  public ResponseEntity<?> checkAdminRole() {
     return ResponseEntity.ok().build();
   }
 }

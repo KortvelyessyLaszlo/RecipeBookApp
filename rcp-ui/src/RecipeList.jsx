@@ -13,26 +13,28 @@ const RecipeList = ({ searchTerm }) => {
   const [recipes, setRecipes] = useState([]);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
-  const [pageSize, setPageSize] = useState(12);
-  const [sortField, setSortField] = useState('');
+  const [pageSize, setPageSize] = useState(20);
+  const [sortField, setSortField] = useState('rating,desc');
   const [currentFilter, setCurrentFilter] = useState({});
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const loadingRef = useRef(null);
   const navigate = useNavigate();
 
-  const fetchRecipes = async (filter = {}, page = 0, size = 20, sort = '', append = false) => {
+  const fetchRecipes = async (filter = {}, page = 0, size = 20, sort = 'rating,desc', append = false) => {
     try {
       if (loading) return;
 
       setLoading(true);
 
       setCurrentPage(page);
-      if (!append) setCurrentFilter(filter);
+      const updatedFilter = { ...filter, searchTerm };
+
+      if (!append) setCurrentFilter(updatedFilter);
       if (size !== pageSize) setPageSize(size);
       if (sort !== sortField) setSortField(sort);
 
-      const response = await getRecipes(filter, page, size, sort);
+      const response = await getRecipes(updatedFilter, page, size, sort);
 
       const newData = response.data || [];
 
@@ -61,8 +63,8 @@ const RecipeList = ({ searchTerm }) => {
   };
 
   useEffect(() => {
-    fetchRecipes();
-  }, []);
+    fetchRecipes(currentFilter, 0, pageSize, sortField, false);
+  }, [searchTerm]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -95,17 +97,12 @@ const RecipeList = ({ searchTerm }) => {
     navigate(`/recipe/${recipeId}`);
   };
 
-  const filteredRecipes = recipes.filter((recipe) =>
-    recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    recipe.author.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   return (
     <MDBContainer fluid className='mt-4 RecipeList'>
       {error && <Alert variant='danger' className='mb-4'>{error}</Alert>}
       <FilterSortButtons onFilter={handleFilterSort} />
       <MDBRow>
-        {filteredRecipes.map((recipe, index) => (
+        {recipes.map((recipe, index) => (
           <MDBCol
             key={`${recipe.id}-${index}`}
             className='mb-4'
@@ -136,7 +133,7 @@ const RecipeList = ({ searchTerm }) => {
       <div ref={loadingRef} style={{ height: '30px', margin: '20px 0' }}>
         {loading && (
           <div className="text-center">
-            <MDBSpinner role='status'/>
+            <MDBSpinner role='status' />
           </div>
         )}
       </div>
