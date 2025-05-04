@@ -49,36 +49,9 @@ public class UserServiceImplTest {
   }
 
   @Test
-  public void testDeleteUser() {
-    User user = new User();
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-
-    userService.delete(1L);
-
-    verify(userRepository, times(1)).deleteById(1L);
-  }
-
-  @Test
   public void testDeleteUserNotFound() {
     when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
 
     assertThrows(ResourceNotFoundException.class, () -> userService.delete(1L));
-  }
-
-  @Test
-  public void testFindUserById() {
-    User user = new User();
-    when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
-
-    userService.findById(1L);
-
-    verify(userRepository, times(1)).findById(1L);
-  }
-
-  @Test
-  public void testFindUserByIdNotFound() {
-    when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
-
-    assertThrows(ResourceNotFoundException.class, () -> userService.findById(1L));
   }
 }

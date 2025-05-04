@@ -27,4 +27,10 @@ public class User {
       orphanRemoval = true,
       fetch = FetchType.EAGER)
   private Set<Recipe> recipes;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Comment> comments;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<Rating> ratings;
 }
