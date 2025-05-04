@@ -13,7 +13,7 @@ const ProfileDropdown = () => {
         const checkAuthentication = async () => {
             const isAuthenticated = await AuthService.checkAuth();
             setLoggedIn(isAuthenticated);
-            
+
             if (isAuthenticated) {
                 const adminStatus = await AuthService.checkAdminRole();
                 setIsAdmin(adminStatus);
@@ -38,10 +38,15 @@ const ProfileDropdown = () => {
         event.preventDefault();
         navigate('/my-recipes');
     };
-    
+
     const handleAdminClick = (event) => {
         event.preventDefault();
         navigate('/admin');
+    };
+
+    const handleSettingsClick = (event) => {
+        event.preventDefault();
+        navigate('/settings');
     };
 
     return (
@@ -52,6 +57,7 @@ const ProfileDropdown = () => {
             <MDBDropdownMenu>
                 {loggedIn ? (
                     <>
+                        <MDBDropdownItem link onClick={handleSettingsClick}>Settings</MDBDropdownItem>
                         <MDBDropdownItem link onClick={handleMyRecipesClick}>My recipes</MDBDropdownItem>
                         {isAdmin && (
                             <MDBDropdownItem link onClick={handleAdminClick}>

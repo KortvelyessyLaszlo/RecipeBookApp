@@ -12,4 +12,8 @@ public interface UserService {
   List<User> findAll();
 
   void updateUserRole(Long userId, String role);
+
+  void updateUsername(String currentUsername, String username);
+
+  void updatePassword(String username, String currentPassword, String newPassword);
 }

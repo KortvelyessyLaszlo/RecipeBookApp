@@ -36,7 +36,7 @@ const Admin = () => {
         };
 
         checkAdminAccess();
-    }, [navigate]);
+    }, [activeTab, navigate]);
 
     const fetchData = async (tab) => {
         setLoading(true);
@@ -108,126 +108,134 @@ const Admin = () => {
     };
 
     return (
-        <MDBContainer className="mt-5">
-            <h2 className="mb-4">Admin Dashboard</h2>
+        <>
+            <div className="position-fixed start-0 top-0 ms-4 mt-4"
+                style={{ cursor: 'pointer', zIndex: 1000 }}
+                onClick={() => navigate('/')}>
+                <i className="fas fa-arrow-left fa-lg text-muted"></i>
+            </div>
 
-            {error && <Alert variant="danger" className="mb-4">{error}</Alert>}
+            <MDBContainer className="mt-5">
+                <h2 className="mb-4">Admin Dashboard</h2>
 
-            <MDBTabs className="mb-3">
-                <MDBTabsItem>
-                    <MDBTabsLink
-                        onClick={() => handleTabChange('users')}
-                        active={activeTab === 'users'}
-                    >
-                        Manage Users
-                    </MDBTabsLink>
-                </MDBTabsItem>
-                <MDBTabsItem>
-                    <MDBTabsLink
-                        onClick={() => handleTabChange('recipes')}
-                        active={activeTab === 'recipes'}
-                    >
-                        Manage Recipes
-                    </MDBTabsLink>
-                </MDBTabsItem>            </MDBTabs>
-            <MDBTabsContent>
-                <div className={activeTab === 'users' ? 'd-block' : 'd-none'}>
-                    {loading ? (
-                        <div className="text-center my-5">
-                            <MDBSpinner />
-                        </div>
-                    ) : (
-                        <MDBTable hover responsive>
-                            <MDBTableHead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Username</th>
-                                    <th>Role</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </MDBTableHead>
-                            <MDBTableBody>
-                                {users.map(user => (
-                                    <tr key={user.id}>
-                                        <td>{user.id}</td>
-                                        <td>{user.username}</td>
-                                        <td>
-                                            <MDBBadge color={user.role === 'ADMIN' ? 'danger' : 'info'}>
-                                                {user.role}
-                                            </MDBBadge>
-                                        </td>
-                                        <td>
-                                            <MDBBtn
-                                                color={user.role === 'ADMIN' ? 'warning' : 'success'}
-                                                size="sm"
-                                                className="me-2"
-                                                onClick={() => handleToggleUserRole(user.id, user.role)}
-                                            >
-                                                {user.role === 'ADMIN' ? 'Remove Admin' : 'Make Admin'}
-                                            </MDBBtn>
-                                            <MDBBtn
-                                                color="danger"
-                                                size="sm"
-                                                onClick={() => handleDeleteUser(user.id)}
-                                            >
-                                                Delete
-                                            </MDBBtn>
-                                        </td>
+                {error && <Alert variant="danger" className="mb-4">{error}</Alert>}
+
+                <MDBTabs className="mb-3">
+                    <MDBTabsItem>
+                        <MDBTabsLink
+                            onClick={() => handleTabChange('users')}
+                            active={activeTab === 'users'}
+                        >
+                            Manage Users
+                        </MDBTabsLink>
+                    </MDBTabsItem>
+                    <MDBTabsItem>
+                        <MDBTabsLink
+                            onClick={() => handleTabChange('recipes')}
+                            active={activeTab === 'recipes'}
+                        >
+                            Manage Recipes
+                        </MDBTabsLink>
+                    </MDBTabsItem>            </MDBTabs>
+                <MDBTabsContent>
+                    <div className={activeTab === 'users' ? 'd-block' : 'd-none'}>
+                        {loading ? (
+                            <div className="text-center my-5">
+                                <MDBSpinner />
+                            </div>
+                        ) : (
+                            <MDBTable hover responsive>
+                                <MDBTableHead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </MDBTableBody>
-                        </MDBTable>
-                    )}
-                </div>
+                                </MDBTableHead>
+                                <MDBTableBody>
+                                    {users.map(user => (
+                                        <tr key={user.id}>
+                                            <td>{user.id}</td>
+                                            <td>{user.username}</td>
+                                            <td>
+                                                <MDBBadge color={user.role === 'ADMIN' ? 'danger' : 'info'}>
+                                                    {user.role}
+                                                </MDBBadge>
+                                            </td>
+                                            <td>
+                                                <MDBBtn
+                                                    color={user.role === 'ADMIN' ? 'warning' : 'success'}
+                                                    size="sm"
+                                                    className="me-2"
+                                                    onClick={() => handleToggleUserRole(user.id, user.role)}
+                                                >
+                                                    {user.role === 'ADMIN' ? 'Remove Admin' : 'Make Admin'}
+                                                </MDBBtn>
+                                                <MDBBtn
+                                                    color="danger"
+                                                    size="sm"
+                                                    onClick={() => handleDeleteUser(user.id)}
+                                                >
+                                                    Delete
+                                                </MDBBtn>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </MDBTableBody>
+                            </MDBTable>
+                        )}
+                    </div>
 
-                <div className={activeTab === 'recipes' ? 'd-block' : 'd-none'}>
-                    {loading ? (
-                        <div className="text-center my-5">
-                            <MDBSpinner />
-                        </div>
-                    ) : (
-                        <MDBTable hover responsive>
-                            <MDBTableHead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Created Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </MDBTableHead>
-                            <MDBTableBody>
-                                {recipes.map(recipe => (
-                                    <tr key={recipe.id}>
-                                        <td>{recipe.id}</td>
-                                        <td>{recipe.title}</td>
-                                        <td>{recipe.author}</td>
-                                        <td>{new Date(recipe.createdAt).toLocaleDateString()}</td>
-                                        <td>
-                                            <MDBBtn
-                                                color="primary"
-                                                size="sm"
-                                                className="me-2"
-                                                onClick={() => handleViewRecipe(recipe.id)}
-                                            >
-                                                View
-                                            </MDBBtn>
-                                            <MDBBtn
-                                                color="danger"
-                                                size="sm"
-                                                onClick={() => handleDeleteRecipe(recipe.id)}
-                                            >
-                                                Delete
-                                            </MDBBtn>
-                                        </td>
+                    <div className={activeTab === 'recipes' ? 'd-block' : 'd-none'}>
+                        {loading ? (
+                            <div className="text-center my-5">
+                                <MDBSpinner />
+                            </div>
+                        ) : (
+                            <MDBTable hover responsive>
+                                <MDBTableHead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Created Date</th>
+                                        <th>Actions</th>
                                     </tr>
-                                ))}
-                            </MDBTableBody>
-                        </MDBTable>
-                    )}
-                </div>
-            </MDBTabsContent>
-        </MDBContainer>
+                                </MDBTableHead>
+                                <MDBTableBody>
+                                    {recipes.map(recipe => (
+                                        <tr key={recipe.id}>
+                                            <td>{recipe.id}</td>
+                                            <td>{recipe.title}</td>
+                                            <td>{recipe.author}</td>
+                                            <td>{new Date(recipe.createdAt).toLocaleDateString()}</td>
+                                            <td>
+                                                <MDBBtn
+                                                    color="primary"
+                                                    size="sm"
+                                                    className="me-2"
+                                                    onClick={() => handleViewRecipe(recipe.id)}
+                                                >
+                                                    View
+                                                </MDBBtn>
+                                                <MDBBtn
+                                                    color="danger"
+                                                    size="sm"
+                                                    onClick={() => handleDeleteRecipe(recipe.id)}
+                                                >
+                                                    Delete
+                                                </MDBBtn>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </MDBTableBody>
+                            </MDBTable>
+                        )}
+                    </div>
+                </MDBTabsContent>
+            </MDBContainer>
+        </>
     );
 };
 

@@ -1,4 +1,4 @@
-import { MDBContainer, MDBRow, MDBCol } from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBSpinner } from 'mdb-react-ui-kit';
 import { Alert } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import { getUserRecipes, deleteRecipeById } from './service/recipeservice';
@@ -15,16 +15,20 @@ const MyRecipesList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [deleteModal, setDeleteModal] = useState({ show: false, recipeId: null });
     const [showAddCard, setShowAddCard] = useState(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRecipes = async () => {
+            setLoading(true);
             try {
                 const userRecipes = await getUserRecipes();
                 setRecipes(userRecipes);
                 setShowAddCard(true);
             } catch {
                 setError('Failed to load recipes. Please try again later.');
+            } finally {
+                setLoading(false);
             }
         };
         fetchRecipes();
@@ -47,12 +51,15 @@ const MyRecipesList = () => {
             setDeleteModal({ show: true, recipeId });
         } else if (confirm) {
             try {
+                setLoading(true);
+                setDeleteModal({ show: false, recipeId: null });
                 await deleteRecipeById(deleteModal.recipeId);
                 setRecipes(recipes.filter(recipe => recipe.id !== deleteModal.recipeId));
             } catch {
                 setError('Failed to delete recipe. Please try again later.');
+            } finally {
+                setLoading(false);
             }
-            setDeleteModal({ show: false, recipeId: null });
         } else {
             setDeleteModal({ show: false, recipeId: null });
         }
@@ -80,25 +87,31 @@ const MyRecipesList = () => {
             <MyRecipesNavbar onSearch={handleSearch} />
             <MDBContainer fluid className='mt-4 MyRecipesList'>
                 {error && <Alert variant='danger' className='mb-4'>{error}</Alert>}
-                <MDBRow>
-                    {filteredRecipes.map((recipe) => (
-                        <MDBCol key={recipe.id} className='mb-4' md='3' sm='6' xs='12'>
-                            <RecipeCard 
-                                recipe={recipe}
-                                onRecipeClick={handleRecipeClick}
-                                onEditClick={handleEditClick}
-                                onDeleteClick={handleDelete}
-                            />
-                        </MDBCol>
-                    ))}
-                    {showAddCard && (
-                        <MDBCol className='mb-4' md='3' sm='6' xs='12'>
-                            <AddRecipeCard onClick={handleAddRecipe} />
-                        </MDBCol>
-                    )}
-                </MDBRow>
+                {loading ? (
+                    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+                        <MDBSpinner />
+                    </div>
+                ) : (
+                    <MDBRow>
+                        {filteredRecipes.map((recipe) => (
+                            <MDBCol key={recipe.id} className='mb-4' md='3' sm='6' xs='12'>
+                                <RecipeCard
+                                    recipe={recipe}
+                                    onRecipeClick={handleRecipeClick}
+                                    onEditClick={handleEditClick}
+                                    onDeleteClick={handleDelete}
+                                />
+                            </MDBCol>
+                        ))}
+                        {showAddCard && (
+                            <MDBCol className='mb-4' md='3' sm='6' xs='12'>
+                                <AddRecipeCard onClick={handleAddRecipe} />
+                            </MDBCol>
+                        )}
+                    </MDBRow>
+                )}
             </MDBContainer>
-            <DeleteConfirmationModal 
+            <DeleteConfirmationModal
                 show={deleteModal.show}
                 onCancel={handleDeleteCancel}
                 onConfirm={handleDeleteConfirm}

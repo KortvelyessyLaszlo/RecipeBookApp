@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Alert } from 'react-bootstrap';
-import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBCardTitle, MDBInput, MDBBtn, MDBTextArea } from 'mdb-react-ui-kit';
+import { MDBContainer, MDBRow, MDBCol, MDBCard, MDBCardBody, MDBCardTitle, MDBInput, MDBBtn, MDBTextArea, MDBSpinner } from 'mdb-react-ui-kit';
 import { getIngredients, addRecipe } from './service/recipeservice';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -15,6 +15,7 @@ const AddRecipe = () => {
     const [cookingTime, setCookingTime] = useState('');
     const [ingredientOptions, setIngredientOptions] = useState([]);
     const [error, setError] = useState(null);
+    const [submitting, setSubmitting] = useState(false);
 
     useEffect(() => {
         const fetchIngredients = async () => {
@@ -54,10 +55,10 @@ const AddRecipe = () => {
             const base64String = reader.result.split(',')[1];
             setImage(base64String);
         };
-    };
-
-    const handleSubmit = async (event) => {
+    }; const handleSubmit = async (event) => {
         event.preventDefault();
+        setSubmitting(true);
+
         const recipe = {
             title,
             ingredients,
@@ -71,6 +72,8 @@ const AddRecipe = () => {
             navigate('/my-recipes');
         } catch {
             setError('Failed to add recipe. Please try again later.');
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -81,7 +84,16 @@ const AddRecipe = () => {
                     {error && <Alert variant='danger'>{error}</Alert>}
                     <MDBCard className='w-100'>
                         <MDBCardBody>
-                            <MDBCardTitle>Add New Recipe</MDBCardTitle>
+                            <div className="d-flex align-items-center mb-4 position-relative">
+                                <div
+                                    className="position-absolute start-0"
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={() => navigate('/my-recipes')}
+                                >
+                                    <i className="fas fa-arrow-left fa-lg text-muted"></i>
+                                </div>
+                                <MDBCardTitle className="w-100 text-center m-0">Add New Recipe</MDBCardTitle>
+                            </div>
                             <form onSubmit={handleSubmit}>
                                 <MDBInput label='Title' value={title} onChange={(e) => setTitle(e.target.value)} required />
                                 <MDBCardTitle className='mt-4'>Ingredients</MDBCardTitle>
@@ -109,9 +121,15 @@ const AddRecipe = () => {
                                 <MDBTextArea label='Instructions' value={instructions} onChange={(e) => setInstructions(e.target.value)} rows='4'
                                     className='mt-4' required style={{ resize: 'none', overflow: 'hidden' }}
                                     onInput={(e) => { e.target.style.height = 'auto'; e.target.style.height = e.target.scrollHeight + 'px'; }} />
-                                <MDBInput type='file' accept='.jpg,.jpeg,.png' onChange={handleImageChange} className='mt-4' required />
-                                <MDBInput label='Cooking Time (minutes)' type='number' value={cookingTime} onChange={(e) => setCookingTime(e.target.value)} className='mt-4' required />
-                                <MDBBtn type='submit' color='primary' className='mt-4'>Submit</MDBBtn>
+                                <MDBInput type='file' accept='.jpg,.jpeg,.png' onChange={handleImageChange} className='mt-4' required />                                <MDBInput label='Cooking Time (minutes)' type='number' value={cookingTime} onChange={(e) => setCookingTime(e.target.value)} className='mt-4' required />
+                                <MDBBtn type='submit' color='primary' className='mt-4' disabled={submitting}>
+                                    {submitting ? (
+                                        <>
+                                            <MDBSpinner size='sm' className='me-2' />
+                                            Adding...
+                                        </>
+                                    ) : 'Submit'}
+                                </MDBBtn>
                             </form>
                         </MDBCardBody>
                     </MDBCard>

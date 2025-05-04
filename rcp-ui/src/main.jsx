@@ -8,19 +8,21 @@ import AddRecipe from './AddRecipe';
 import RecipeDetails from './RecipeDetails';
 import EditRecipe from './EditRecipe';
 import Admin from './Admin';
+import Settings from './Settings';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/my-recipes" element={<MyRecipesList />} />
-        <Route path="/add-recipe" element={<AddRecipe />} />
-        <Route path="/edit-recipe/:id" element={<EditRecipe />} />
-        <Route path="/recipe/:id" element={<RecipeDetails />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/" element={<Home />} />
-      </Routes>
-    </Router>
+  <Router>
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
+      <Route path="/my-recipes" element={<MyRecipesList />} />
+      <Route path="/add-recipe" element={<AddRecipe />} />
+      <Route path="/edit-recipe/:id" element={<EditRecipe />} />
+      <Route path="/recipe/:id" element={<RecipeDetails />} />
+      <Route path="/admin" element={<Admin />} />
+      <Route path="/settings" element={<Settings />} />
+      <Route path="/" element={<Home />} />
+    </Routes>
+  </Router>
 );

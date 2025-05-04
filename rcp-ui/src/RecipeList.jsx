@@ -133,7 +133,7 @@ const RecipeList = ({ searchTerm }) => {
       <div ref={loadingRef} style={{ height: '30px', margin: '20px 0' }}>
         {loading && (
           <div className="text-center">
-            <MDBSpinner role='status' />
+            <MDBSpinner />
           </div>
         )}
       </div>

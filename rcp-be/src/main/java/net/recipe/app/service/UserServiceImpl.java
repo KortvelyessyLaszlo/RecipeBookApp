@@ -7,6 +7,7 @@ import net.recipe.app.entity.Rating;
 import net.recipe.app.entity.User;
 import net.recipe.app.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
   @Override
   public void save(User user) {
@@ -65,6 +67,36 @@ public class UserServiceImpl implements UserService {
     } else if (role.equalsIgnoreCase("USER")) {
       user.getRoles().remove("ADMIN");
     }
+    userRepository.save(user);
+  }
+
+  @Override
+  public void updateUsername(String currentUsername, String username) {
+    User user = userRepository.findByUsername(currentUsername);
+    if (user == null) {
+      throw new ResourceNotFoundException("User not found with username: " + currentUsername);
+    }
+
+    if (userRepository.findByUsername(username) != null) {
+      throw new DataIntegrityViolationException("Username already taken: " + username);
+    }
+
+    user.setUsername(username);
+    userRepository.save(user);
+  }
+
+  @Override
+  public void updatePassword(String username, String currentPassword, String newPassword) {
+    User user = userRepository.findByUsername(username);
+    if (user == null) {
+      throw new ResourceNotFoundException("User not found with username: " + username);
+    }
+
+    if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+      throw new IllegalArgumentException("Current password is incorrect");
+    }
+
+    user.setPassword(newPassword);
     userRepository.save(user);
   }
 }
